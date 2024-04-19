@@ -1,4 +1,4 @@
-# ![avimnoel.png](logo) aVimnoel
+# ![Logo](avimnoel.png) aVimnoel
 
 Add a vim-like mode to navigate on avenoel with your keyboard only
 Keybinds:
