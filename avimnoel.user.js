@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      0.4.2
+// @version      0.4.3
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -170,10 +170,6 @@ function keyup(e) {
     case 'AltGraph':
       $$('.vim-hint').forEach((el) => el.remove());
   }
-  if (TOP_ROW.includes(e.code)) {
-    if (path('forum')) navigation.navigate($$('.topic-icon a')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)].href + (e.ctrlKey ? '#form' : ''));
-    if (path('topic')) scroll($$('.topic-message')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)]);
-  }
 }
 
 function keydown(e) {
@@ -260,6 +256,10 @@ function keydown(e) {
       break;
     case 'Backspace':
       navigation.canGoBack && navigation.back();
+  }
+  if (TOP_ROW.includes(e.code)) {
+    if (path('forum')) navigation.navigate($$('.topic-icon a')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)].href + (e.ctrlKey ? '#form' : ''));
+    if (path('topic')) scroll($$('.topic-message')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)]);
   }
 }
 
