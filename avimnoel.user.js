@@ -6,7 +6,7 @@
 // @source       https://github.com/Tigriz
 // @license      CECILL-2.1; http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
 // @match        https://avenoel.org/*
-// @icon         https://raw.githubusercontent.com/Tigriz/Stratoscript/feat/avimnoel-standalone/standalones/avimnoel/avimnoel.png
+// @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/avimnoel.png
 // @run-at       document-body
 // @grant        none
 // ==/UserScript==
