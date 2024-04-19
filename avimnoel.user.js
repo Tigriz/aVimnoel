@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      0.3.0
+// @version      0.4.0
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -20,7 +20,7 @@ const PROMPT_HINTS = [
   { code: ':w', description: 'Save' },
   { code: ':wq', description: 'Save and quit' },
 ];
-const UI = html(`
+const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
 <datalist id="vim-hints">
   ${PROMPT_HINTS.map((hint) => `<option value="${hint.code}"></option>`).join('')}
@@ -45,10 +45,20 @@ ${PROMPT_HINTS.map((hint) => `  - ${hint.code} ${hint.description}`).join('\
 `);
 const PROMPT = UI[0];
 
-function html(string) {
+const path = (section) => PATH.startsWith('/' + section);
+let cursor = 0;
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
+
+function h(string) {
   const template = document.createElement('template');
   template.innerHTML = string;
   return template.content.children;
+}
+
+function scroll(element) {
+  window.scrollTo({ top: element.getBoundingClientRect().y - document.querySelector('.navbar').clientHeight + window.scrollY });
 }
 
 function ui() {
@@ -57,22 +67,22 @@ function ui() {
       try {
         switch (PROMPT.value) {
           case ':wq':
-            document.querySelector(".form-group:has(input[name='_token']) button[type='submit']").click();
-            if (PATH.startsWith('/topic')) navigation.navigate('/forum');
+            $(".form-group:has(input[name='_token']) button[type='submit']").click();
+            if (path('topic')) navigation.navigate('/forum');
             break;
           case ':w':
-            document.querySelector(".form-group:has(input[name='_token']) button[type='submit']").click();
+            $(".form-group:has(input[name='_token']) button[type='submit']").click();
             break;
           case ':q':
-            if (PATH.startsWith('/topic')) navigation.navigate('/forum');
+            if (path('topic')) navigation.navigate('/forum');
             break;
           case ':h':
-            document.querySelector('#vim-help').style.display = document.querySelector('#vim-help').style.display === 'block' ? 'none' : 'block';
+            $('#vim-help').style.display = $('#vim-help').style.display === 'block' ? 'none' : 'block';
         }
         if (+PROMPT.value.slice(1) !== NaN) {
           document.activeElement.blur();
-          if (PATH.startsWith('/forum')) document.querySelectorAll('.topics-title a')[+PROMPT.value.slice(1)].click();
-          if (PATH.startsWith('/topic')) document.querySelectorAll('.topic-message')[+PROMPT.value.slice(1)].scrollIntoView({ behavior: 'smooth' });
+          if (path('forum')) $$('.topics-title a')[+PROMPT.value.slice(1)].click();
+          if (path('topic')) scroll($$('.topic-message')[+PROMPT.value.slice(1)]);
         }
       } finally {
         PROMPT.value = '';
@@ -97,6 +107,7 @@ function css() {
     padding: 4px;
     border: none;
     outline: none;
+    pointer-events: none;
   }
   #vim-prompt:focus {
     background: #0008;
@@ -106,7 +117,7 @@ function css() {
     bottom: 0;
     right:0;
     margin: 0;
-    max-width: 50vw;
+    max-width: 400px;
     background: #000b;
     color: #fff;
     z-index: 1000;
@@ -126,22 +137,44 @@ function css() {
     position: absolute;
     opacity: 0.9;
     transform: translate(-100%, -100%);
-  }  
+  }
+  .vim-selection,
+  .topic-message.vim-selection,
+  tr.vim-selection {
+    background-color: #fff3 !important;
+  }
   `;
   document.body.append(style);
 }
 
+function setCursor(index) {
+  if (index < 0) index = 0;
+  $$('.vim-selection').forEach((el) => el.classList.remove('vim-selection'));
+  let entries = [];
+  if (path('forum')) entries = $$('tbody tr');
+  if (path('topic')) entries = $$('.topic-message');
+  index = entries.length > index ? index : entries.length - 1;
+  const target = entries[index];
+  target.classList.add('vim-selection');
+  if (path('topic')) scroll(target);
+  cursor = index;
+}
+
 function keyup(e) {
-  console.debug('🔶 avimnoel: keyup', e);
+  console.debug('🔶 a𝑽𝒊𝒎noel: keyup', e);
   switch (e.key) {
     case 'Alt':
     case 'AltGraph':
-      document.querySelectorAll('.vim-hint').forEach((el) => el.remove());
+      $$('.vim-hint').forEach((el) => el.remove());
+  }
+  if (TOP_ROW.includes(e.code)) {
+    if (path('forum')) navigation.navigate($$('.topic-icon a')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)].href + (e.ctrlKey ? '#form' : ''));
+    if (path('topic')) scroll($$('.topic-message')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)]);
   }
 }
 
 function keydown(e) {
-  console.debug('🔶 avimnoel: keydown', e);
+  console.debug('🔶 a𝑽𝒊𝒎noel: keydown', e);
   if (INSERT_NODES.includes(document.activeElement.nodeName) && e.code === 'Escape') {
     document.activeElement.blur();
     PROMPT.value = '';
@@ -149,19 +182,22 @@ function keydown(e) {
   if (INSERT_NODES.includes(document.activeElement.nodeName)) return;
 
   switch (e.key) {
+    case 'Enter':
+      if (path('forum')) navigation.navigate($$('.topic-icon a')[cursor].href + (e.ctrlKey ? '#form' : ''));
+      if (path('topic')) scroll($$('.topic-message')[cursor]);
     case 'Alt':
     case 'AltGraph':
-      if (PATH.startsWith('/forum')) {
-        document.querySelectorAll('tbody tr .topic-icon').forEach((el, index) => {
-          el.append(...html(`<div class="vim-hint">${index > 12 ? '<kbd>Shift</kbd> + ' : ''}<kbd>${TOP_ROW[index % 13]}</kbd></div>`));
+      if (path('forum')) {
+        $$('tbody tr .topic-icon').forEach((el, index) => {
+          el.append(...h(`<div class="vim-hint">${index > 12 ? '<kbd>Shift</kbd> + ' : ''}<kbd>${TOP_ROW[index % 13]}</kbd></div>`));
         });
       }
       break;
     case 'r':
     case 'R':
     case 'F5':
-      if (PATH.startsWith('/forum')) navigation.reload();
-      if (PATH.startsWith('/topic')) {
+      if (path('forum')) navigation.reload();
+      if (path('topic')) {
         location.href += '#form';
         location.reload();
       }
@@ -169,36 +205,49 @@ function keydown(e) {
       break;
     case 'i':
     case 'I':
-      if (PATH.startsWith('/forum')) {
-        document.querySelector('input[name="title"]').scrollIntoView({ behavior: 'smooth' });
-        document.querySelector('input[name="title"]').focus();
+      if (path('forum')) {
+        scroll($('input[name="title"]'));
+        scroll($('input[name="title"]'));
       }
-      if (PATH.startsWith('/topic')) {
-        document.querySelector('#form textarea').scrollIntoView({ behavior: 'smooth' });
-        document.querySelector('#form textarea').focus();
+      if (path('topic')) {
+        scroll($('#form textarea'));
+        $('#form textarea').focus();
       }
       PROMPT.value = '-- INSERT --';
       e.preventDefault();
       break;
     case 'h':
-      document.querySelector('.pagination-topic li:nth-child(2) a').click();
+    case 'ArrowLeft':
+      $('.glyphicon-chevron-left').parentNode.click();
+      e.preventDefault();
       break;
     case 'H':
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (path('forum')) navigation.navigate('/forum');
+      if (path('topic')) $('.pagination-topic li:nth-child(2) a').click();
       break;
     case 'j':
+    case 'ArrowUp':
+      setCursor(cursor - 1);
+      e.preventDefault();
+      break;
     case 'J':
-      document.querySelector('.glyphicon-chevron-left').parentNode.click();
+      if (path('topic')) scroll($('.topic-message:first-child'));
       break;
     case 'k':
+    case 'ArrowDown':
+      setCursor(cursor + 1);
+      e.preventDefault();
+      break;
     case 'K':
-      document.querySelector('.glyphicon-chevron-right').parentNode.click();
+      if (path('topic')) scroll($('.topic-message:last-child'));
       break;
     case 'l':
-      document.querySelector('.pagination-topic li:nth-last-child(2) a').click();
+    case 'ArrowRight':
+      $('.glyphicon-chevron-right').parentNode.click();
+      e.preventDefault();
       break;
     case 'L':
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      if (path('topic')) $('.pagination-topic li:nth-last-child(2) a').click();
       break;
     case ':':
       PROMPT.disabled = false;
@@ -208,14 +257,6 @@ function keydown(e) {
     case 'Backspace':
       navigation.canGoBack && navigation.back();
   }
-  if (TOP_ROW.includes(e.code)) {
-    if (PATH.startsWith('/forum'))
-      navigation.navigate(
-        document.querySelectorAll('.topic-icon a')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)].href + (e.ctrlKey ? '#form' : '')
-      );
-    if (PATH.startsWith('/topic'))
-      document.querySelectorAll('.topic-message')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)].scrollIntoView({ behavior: 'smooth' });
-  }
 }
 
 function vim() {
@@ -223,7 +264,7 @@ function vim() {
   document.onkeydown = keydown;
   css();
   ui();
-  console.log('🔶 avimnoel: loaded');
+  console.log('🔶 a𝑽𝒊𝒎noel: ready');
 }
 
 vim();
