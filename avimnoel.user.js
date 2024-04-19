@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      0.4.1
+// @version      0.4.2
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -37,7 +37,7 @@ const UI = h(`
 - <b>K</b> goes to last entry
 - <b>l</b> or <b>➡️</b> goes to next page
 - <b>L</b> goes to first page
-- top keyboard row (numbers and chars) navigates from first to 13th topic/message, <b>Shift</b> to go from 14th to 26th (it does not exist but who cares, it doesn't crash the script)
+- top keyboard row (numbers and chars) navigates from first to 13th entry, <b>Shift</b> to go from 14th to 26th
   - <b>Ctrl</b> goes to the bottom of the last page of a topic
 - <b>Alt</b> shows hints
 - <b>:</b> opens vim prompt; can be exited using <b>Escape</b>
