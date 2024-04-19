@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      0.4.0
+// @version      0.4.1
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -26,21 +26,23 @@ const UI = h(`
   ${PROMPT_HINTS.map((hint) => `<option value="${hint.code}"></option>`).join('')}
 </datalist>
 <pre id="vim-help" style="display: none">
-- \`r\` or \`F5\` refreshes
+- <b>r</b> or <b>F5</b> refreshes
   - if in a topic, also scrolls to bottom
-- \`i\` scrolls to and focuses message form
-- \`h\` goes to first page of a topic
-- \`H\` goes to top of current page
-- \`j\` goes to previous page
-- \`k\` goes to next page
-- \`l\` goes to last page of a topic
-- \`L\` goes to bottom of current page
-- top keyboard row (numbers and chars) navigates from first to 13th topic/message, \`Shift\` to go from 14th to 26th (it does not exist but who cares, it doesn't crash the script)
-  - \`Ctrl\` goes to the bottom of the last page of a topic
-- \`Alt\` shows hints
-- \`:\` opens vim prompt; can be exited using \`Escape\`
-${PROMPT_HINTS.map((hint) => `  - ${hint.code} ${hint.description}`).join('\n')}
-- \`Backspace\` navigates to previous page
+- <b>i</b> scrolls to and focuses message form
+- <b>h</b> or <b>⬅️</b> goes to previous page
+- <b>H</b> goes to first page
+- <b>j</b> or <b>⬆️</b> goes to previous entry 
+- <b>J</b> goes to first entry 
+- <b>k</b> or <b>⬇️</b> goes to next entry
+- <b>K</b> goes to last entry
+- <b>l</b> or <b>➡️</b> goes to next page
+- <b>L</b> goes to first page
+- top keyboard row (numbers and chars) navigates from first to 13th topic/message, <b>Shift</b> to go from 14th to 26th (it does not exist but who cares, it doesn't crash the script)
+  - <b>Ctrl</b> goes to the bottom of the last page of a topic
+- <b>Alt</b> shows hints
+- <b>:</b> opens vim prompt; can be exited using <b>Escape</b>
+${PROMPT_HINTS.map((hint) => `  - <b>${hint.code}</b> ${hint.description}`).join('\n')}
+- <b>Backspace</b> navigates to previous page
 </pre>
 `);
 const PROMPT = UI[0];
@@ -87,6 +89,7 @@ function ui() {
       } finally {
         PROMPT.value = '';
         PROMPT.disabled = true;
+        e.stopPropagation()
       }
     }
   };
@@ -185,6 +188,7 @@ function keydown(e) {
     case 'Enter':
       if (path('forum')) navigation.navigate($$('.topic-icon a')[cursor].href + (e.ctrlKey ? '#form' : ''));
       if (path('topic')) scroll($$('.topic-message')[cursor]);
+      break;
     case 'Alt':
     case 'AltGraph':
       if (path('forum')) {
