@@ -8,17 +8,16 @@
 // @match        https://avenoel.org/*
 // @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/img/avimnoel.png
 // @run-at       document-body
-// @grant        none
+// @grant        GM_info
 // ==/UserScript==
 
-const VERSION = '0.4.3';
+const DEV_MODE = GM_info.script.name.includes('dev');
+const HOST = DEV_MODE ? 'http://127.0.0.1:8080' : 'https://raw.githubusercontent.com/Tigriz/aVimnoel/main';
 
-const HOST = 'http://127.0.0.1:8080'
-
-const { config } = await import(`${HOST}/js/config.js?v=${VERSION}`);
-const { $, $$, h, scroll } = await import(`${HOST}/js/utils.js?v=${VERSION}`);
-const { prompts } = await import(`${HOST}/js/prompts.js?v=${VERSION}`);
-const { actions } = await import(`${HOST}/js/actions.js?v=${VERSION}`);
+const { config } = await import(`${HOST}/js/config.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { $, $$, h, scroll } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { prompts } = await import(`${HOST}/js/prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { actions } = await import(`${HOST}/js/actions.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
 const PATH = location.pathname || window.location.pathname;
 const INSERT_NODES = ['TEXTAREA', 'INPUT'];
@@ -26,7 +25,9 @@ const TOP_ROW = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 
 const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
 <datalist id="vim-hints">
-  ${Object.keys(prompts).map((prompt) => `<option value="${prompt}"></option>`).join('')}
+  ${Object.keys(prompts)
+    .map((prompt) => `<option value="${prompt}"></option>`)
+    .join('')}
 </datalist>
 <pre id="vim-help" style="display: none">
 - <b>r</b> or <b>F5</b> refreshes
@@ -44,7 +45,9 @@ const UI = h(`
   - <b>Ctrl</b> goes to the bottom of the last page of a topic
 - <b>Alt</b> shows hints
 - <b>:</b> opens vim prompt; can be exited using <b>Escape</b>
-${Object.keys(prompts).map((prompt) => `  - <b>${prompt}</b> ${prompts[prompt].description}`).join('\n')}
+${Object.keys(prompts)
+  .map((prompt) => `  - <b>${prompt}</b> ${prompts[prompt].description}`)
+  .join('\n')}
 - <b>Backspace</b> navigates to previous page
 </pre>
 `);
