@@ -138,11 +138,26 @@ export const keys = [
   {
     key: 'Enter',
     on: 'keydown',
-    action: 'selectHighlight',
+    action: 'select',
   },
   {
     key: 'Backspace',
     on: 'keydown',
     action: 'back',
+  },
+  {
+    key: 'q',
+    on: 'keydown',
+    action: 'quote',
+  },
+  {
+    key: 'e',
+    on: 'keydown',
+    action: 'edit',
+  },
+  {
+    key: 'd',
+    on: 'keydown',
+    action: 'delete',
   },
 ];

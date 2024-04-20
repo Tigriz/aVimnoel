@@ -4,4 +4,5 @@ export const prompts = {
   ':w': 'send',
   ':wq': 'sendAndReturn',
   ':auto-end': 'autoEnd',
+  ':reset': 'reset',
 };

@@ -31,6 +31,14 @@ function setCursor(entries, index = 0, scrollTo = false) {
 }
 
 const actions = {
+  reset: {
+    description: 'Reset all configs - useful on breaking updates',
+    bypass: true,
+    default: () => {
+      localStorage.removeItem('vim_prompts');
+      localStorage.removeItem('vim_keys');
+    },
+  },
   send: {
     description: 'Send message',
     bypass: true,
@@ -85,25 +93,26 @@ const actions = {
   },
   select: {
     description: 'Select entry',
-    forum: (index) => {
+    forum: (index = cursor) => {
       document.activeElement.blur();
       $$('.topics-title a')[index].click();
     },
-    topic: (index) => {
+    topic: (index = cursor) => {
       document.activeElement.blur();
       scroll($$('.topic-message')[index]);
     },
   },
-  selectHighlight: {
-    description: 'Select highlighted entry',
-    forum: () => {
-      document.activeElement.blur();
-      $$('.topics-title a')[cursor].click();
-    },
-    topic: () => {
-      document.activeElement.blur();
-      scroll($$('.topic-message')[cursor]);
-    },
+  quote: {
+    description: 'Quote entry',
+    topic: (index = cursor) => $$('.topic-message .message-quote')[index].click(),
+  },
+  edit: {
+    description: 'Edit entry',
+    topic: (index = cursor) => $$('.topic-message .message-edit')[index].click(),
+  },
+  delete: {
+    description: 'Delete entry',
+    topic: (index = cursor) => $$('.topic-message .message-delete')[index].click(),
   },
   page: {
     description: 'Go to page',
@@ -149,13 +158,23 @@ const actions = {
   },
   showHints: {
     description: 'Show hints',
-    default: () =>
+    forum: () =>
       $$('tbody tr .topic-icon').forEach((el, index) => {
         el.append(
           ...h(
             `<div class="vim-hint"><kbd>${
               JSON.parse(localStorage.vim_keys).find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
-            }</kbd></div>`
+            }</kbd> <kbd>${index}</kbd></div>`
+          )
+        );
+      }),
+    topic: () =>
+      $$('.topic-message').forEach((el, index) => {
+        el.append(
+          ...h(
+            `<div class="vim-hint"><kbd>${
+              JSON.parse(localStorage.vim_keys).find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
+            }</kbd> <kbd>${index}</kbd></div>`
           )
         );
       }),

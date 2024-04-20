@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      1.0.8
+// @version      1.0.9
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -18,9 +18,9 @@ const { keys } = await import(`${HOST}/js/config.keys.js?v=${DEV_MODE ? Date.now
 const { prompts } = await import(`${HOST}/js/config.prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 const { $, $$, h, scroll, actions, exec } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
-const KEYS = localStorage.vim_keys || keys;
+const KEYS = localStorage.vim_keys ? JSON.parse(localStorage.vim_keys) : keys;
 localStorage.vim_keys = JSON.stringify(KEYS)
-const PROMPTS = localStorage.vim_prompts || prompts;
+const PROMPTS = localStorage.vim_prompts ? JSON.parse(localStorage.vim_prompts) : prompts;
 localStorage.vim_prompts = JSON.stringify(PROMPTS)
 
 const UI = h(`
@@ -35,10 +35,10 @@ ${KEYS.map(
   (key) =>
     `<i class="${key.on}">${key.altKey ? '<kbd>Alt</kbd> + ' : ''}${key.ctrlKey ? '<kbd>Ctrl</kbd> + ' : ''}${
       key.metaKey ? '<kbd>Meta</kbd> + ' : ''
-    }${key.shiftKey ? '<kbd>Shift</kbd> + ' : ''}<kbd>${key.key}</kbd></i>: ${actions[key.action].description} ${key.parameter ?? ''}`
+    }${key.shiftKey ? '<kbd>Shift</kbd> + ' : ''}<kbd>${key.key}</kbd></i>: ${actions[key.action]?.description} ${key.parameter ?? ''}`
 ).join('\n')}
 ${Object.keys(PROMPTS)
-  .map((prompt) => `<kbd>${prompt}</kbd></i>: ${actions[PROMPTS[prompt]].description}`)
+  .map((prompt) => `<kbd>${prompt}</kbd></i>: ${actions[PROMPTS[prompt]]?.description}`)
   .join('\n')}
 </pre>
 `);
