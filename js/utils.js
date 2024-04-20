@@ -198,7 +198,7 @@ const actions = {
 };
 
 function exec(action, parameters) {
-  if (INSERT_NODES.includes(document.activeElement.nodeName) && actions[action].bypass) return;
+  if (INSERT_NODES.includes(document.activeElement.nodeName) && !actions[action].bypass) return;
   if (typeof actions[action][PATH] !== 'undefined') actions[action][PATH](parameters);
   actions[action].default?.(parameters);
 }
