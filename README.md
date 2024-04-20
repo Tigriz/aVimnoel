@@ -10,3 +10,8 @@ You can use [http-server](https://www.npmjs.com/package/http-server) to serve yo
 ```sh
 http-server . --cors
 ```
+
+## Update github.io
+```sh
+git submodule update --remote && git add * && git commit -m "chore: update aVimnoel" && git push
+```
