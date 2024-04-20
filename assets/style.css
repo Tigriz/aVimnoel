@@ -24,6 +24,17 @@
   color: #fff;
   z-index: 1000;
   white-space: break-spaces;
+  overflow: auto;
+  max-height: 100vh;
+  i {
+    font-style: normal;
+  }
+  .keydown kbd {
+    background: green;
+  }
+  .keyup kbd {
+    background: red;
+  }
 }
 kbd {
   background-color: var(--popup-background);
@@ -44,4 +55,7 @@ kbd {
 .topic-message.vim-selection,
 tr.vim-selection {
   background-color: #fff3 !important;
+}
+tr.vim-selection.active {
+  background-color: #f003 !important;
 }

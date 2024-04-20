@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         a𝑽𝒊𝒎noel
+// @name         a𝑽𝒊𝒎noel dev
 // @version      0.4.3
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
@@ -14,13 +14,12 @@
 const DEV_MODE = GM_info.script.name.includes('dev');
 const HOST = DEV_MODE ? 'http://127.0.0.1:8080' : 'https://raw.githubusercontent.com/Tigriz/aVimnoel/main';
 
-const { config } = await import(`${HOST}/js/config.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
-const { prompts } = await import(`${HOST}/js/prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
-const { actions, $, $$, h, scroll } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { keys } = await import(`${HOST}/js/config.keys.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { prompts } = await import(`${HOST}/js/config.prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { $, $$, h, scroll, actions, exec } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
-const PATH = location.pathname || window.location.pathname;
 const INSERT_NODES = ['TEXTAREA', 'INPUT'];
-const TOP_ROW = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal'];
+
 const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
 <datalist id="vim-hints">
@@ -29,94 +28,43 @@ const UI = h(`
     .join('')}
 </datalist>
 <pre id="vim-help" style="display: none">
-- <b>r</b> or <b>F5</b> refreshes
-  - if in a topic, also scrolls to bottom
-- <b>i</b> scrolls to and focuses message form
-- <b>h</b> or <b>⬅️</b> goes to previous page
-- <b>H</b> goes to first page
-- <b>j</b> or <b>⬆️</b> goes to previous entry 
-- <b>J</b> goes to first entry 
-- <b>k</b> or <b>⬇️</b> goes to next entry
-- <b>K</b> goes to last entry
-- <b>l</b> or <b>➡️</b> goes to next page
-- <b>L</b> goes to first page
-- top keyboard row (numbers and chars) navigates from first to 13th entry, <b>Shift</b> to go from 14th to 26th
-  - <b>Ctrl</b> goes to the bottom of the last page of a topic
-- <b>Alt</b> shows hints
-- <b>:</b> opens vim prompt; can be exited using <b>Escape</b>
-${Object.keys(prompts)
-  .map((prompt) => `  - <b>${prompt}</b> ${prompts[prompt].description}`)
+${keys
+  .map(
+    (key) =>
+      `<i class="${key.on}">${key.altKey ? '<kbd>Alt</kbd> + ' : ''}${key.ctrlKey ? '<kbd>Ctrl</kbd> + ' : ''}${
+        key.metaKey ? '<kbd>Meta</kbd> + ' : ''
+      }${key.shiftKey ? '<kbd>Shift</kbd> + ' : ''}<kbd>${key.key}</kbd></i>: ${actions[key.action].description} ${key.parameter ?? ''}`
+  )
   .join('\n')}
-- <b>Backspace</b> navigates to previous page
 </pre>
 `);
 const PROMPT = UI[0];
+document.body.append(...UI);
 
-const path = (section) => PATH.startsWith('/' + section);
-let cursor = 0;
-
-function ui() {
-  PROMPT.onkeydown = (e) => {
-    if (e.key === 'Enter') {
-      try {
-        switch (PROMPT.value) {
-          case ':wq':
-            $(".form-group:has(input[name='_token']) button[type='submit']").click();
-            if (path('topic')) navigation.navigate('/forum');
-            break;
-          case ':w':
-            $(".form-group:has(input[name='_token']) button[type='submit']").click();
-            break;
-          case ':q':
-            if (path('topic')) navigation.navigate('/forum');
-            break;
-          case ':h':
-            $('#vim-help').style.display = $('#vim-help').style.display === 'block' ? 'none' : 'block';
-        }
-        if (+PROMPT.value.slice(1) !== NaN) {
-          document.activeElement.blur();
-          if (path('forum')) $$('.topics-title a')[+PROMPT.value.slice(1)].click();
-          if (path('topic')) scroll($$('.topic-message')[+PROMPT.value.slice(1)]);
-        }
-      } finally {
-        PROMPT.value = '';
-        PROMPT.disabled = true;
-        e.stopPropagation();
-      }
+PROMPT.onkeydown = (e) => {
+  if (e.key === 'Enter') {
+    try {
+      const prompt = prompts[PROMPT.value];
+      exec(prompt.action, prompt.parameter);
+    } finally {
+      PROMPT.value = '';
+      PROMPT.disabled = true;
+      e.stopPropagation();
     }
-  };
-  document.body.append(...UI);
-}
-
-function css() {
-  document
-    .querySelector('head')
-    .append(...h(`<link rel="stylesheet" type="text/css" href="${HOST}/assets/style.css?v=${DEV_MODE ? Date.now() : GM_info.script.version}">`));
-}
-
-function setCursor(index) {
-  if (index < 0) index = 0;
-  $$('.vim-selection').forEach((el) => el.classList.remove('vim-selection'));
-  let entries = [];
-  if (path('forum')) entries = $$('tbody tr');
-  if (path('topic')) entries = $$('.topic-message');
-  index = entries.length > index ? index : entries.length - 1;
-  const target = entries[index];
-  target.classList.add('vim-selection');
-  if (path('topic')) scroll(target);
-  cursor = index;
-}
-
-function keyup(e) {
-  console.debug('🔶 a𝑽𝒊𝒎noel: keyup', e);
-  switch (e.key) {
-    case 'Alt':
-    case 'AltGraph':
-      $$('.vim-hint').forEach((el) => el.remove());
   }
-}
+};
 
-function keydown(e) {
+document
+  .querySelector('head')
+  .append(...h(`<link rel="stylesheet" type="text/css" href="${HOST}/assets/style.css?v=${DEV_MODE ? Date.now() : GM_info.script.version}">`));
+
+document.onkeyup = (e) => {
+  console.debug('🔶 a𝑽𝒊𝒎noel: keyup', e);
+  const match = keys.find((key) => key.key === e.key && key.on === 'keyup');
+  if (match) exec(match.action, match.parameter);
+};
+
+document.onkeydown = (e) => {
   console.debug('🔶 a𝑽𝒊𝒎noel: keydown', e);
   if (INSERT_NODES.includes(document.activeElement.nodeName) && e.code === 'Escape') {
     document.activeElement.blur();
@@ -124,95 +72,8 @@ function keydown(e) {
   }
   if (INSERT_NODES.includes(document.activeElement.nodeName)) return;
 
-  switch (e.key) {
-    case 'Enter':
-      if (path('forum')) navigation.navigate($$('.topic-icon a')[cursor].href + (e.ctrlKey ? '#form' : ''));
-      if (path('topic')) scroll($$('.topic-message')[cursor]);
-      break;
-    case 'Alt':
-    case 'AltGraph':
-      if (path('forum')) {
-        $$('tbody tr .topic-icon').forEach((el, index) => {
-          el.append(...h(`<div class="vim-hint">${index > 12 ? '<kbd>Shift</kbd> + ' : ''}<kbd>${TOP_ROW[index % 13]}</kbd></div>`));
-        });
-      }
-      break;
-    case 'r':
-    case 'R':
-    case 'F5':
-      if (path('forum')) navigation.reload();
-      if (path('topic')) {
-        location.href += '#form';
-        location.reload();
-      }
-      e.preventDefault();
-      break;
-    case 'i':
-    case 'I':
-      if (path('forum')) {
-        scroll($('input[name="title"]'));
-        scroll($('input[name="title"]'));
-      }
-      if (path('topic')) {
-        scroll($('#form textarea'));
-        $('#form textarea').focus();
-      }
-      PROMPT.value = '-- INSERT --';
-      e.preventDefault();
-      break;
-    case 'h':
-    case 'ArrowLeft':
-      $('.glyphicon-chevron-left').parentNode.click();
-      e.preventDefault();
-      break;
-    case 'H':
-      if (path('forum')) navigation.navigate('/forum');
-      if (path('topic')) $('.pagination-topic li:nth-child(2) a').click();
-      break;
-    case 'j':
-    case 'ArrowUp':
-      setCursor(cursor - 1);
-      e.preventDefault();
-      break;
-    case 'J':
-      if (path('topic')) scroll($('.topic-message:first-child'));
-      break;
-    case 'k':
-    case 'ArrowDown':
-      setCursor(cursor + 1);
-      e.preventDefault();
-      break;
-    case 'K':
-      if (path('topic')) scroll($('.topic-message:last-child'));
-      break;
-    case 'l':
-    case 'ArrowRight':
-      $('.glyphicon-chevron-right').parentNode.click();
-      e.preventDefault();
-      break;
-    case 'L':
-      if (path('topic')) $('.pagination-topic li:nth-last-child(2) a').click();
-      break;
-    case ':':
-      PROMPT.disabled = false;
-      PROMPT.value = '';
-      PROMPT.focus();
-      break;
-    case 'Backspace':
-      navigation.canGoBack && navigation.back();
-  }
-  if (TOP_ROW.includes(e.code)) {
-    if (path('forum')) navigation.navigate($$('.topic-icon a')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)].href + (e.ctrlKey ? '#form' : ''));
-    if (path('topic')) scroll($$('.topic-message')[TOP_ROW.indexOf(e.code) + (e.shiftKey ? 13 : 0)]);
-  }
-}
+  const match = keys.find((key) => key.key === e.key && key.on === 'keydown');
+  if (match) exec(match.action, match.parameter);
+};
 
-function vim() {
-  document.onkeyup = keyup;
-  document.onkeydown = keydown;
-  css();
-  ui();
-  console.log('🔶 a𝑽𝒊𝒎noel: ready');
-}
-
-vim();
+console.log('🔶 a𝑽𝒊𝒎noel: ready');
