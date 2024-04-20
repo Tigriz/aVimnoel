@@ -19,9 +19,9 @@ const { prompts } = await import(`${HOST}/js/config.prompts.js?v=${DEV_MODE ? Da
 const { $, $$, h, scroll, actions, exec } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
 const KEYS = localStorage.vim_keys ? JSON.parse(localStorage.vim_keys) : keys;
-localStorage.vim_keys = JSON.stringify(KEYS)
+localStorage.vim_keys = JSON.stringify(KEYS);
 const PROMPTS = localStorage.vim_prompts ? JSON.parse(localStorage.vim_prompts) : prompts;
-localStorage.vim_prompts = JSON.stringify(PROMPTS)
+localStorage.vim_prompts = JSON.stringify(PROMPTS);
 
 const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
@@ -46,8 +46,8 @@ const PROMPT = UI[0];
 document.body.append(...UI);
 
 const style = document.createElement('style');
-style.innerText = await (await fetch(`${HOST}/assets/style.css?v=${DEV_MODE ? Date.now() : GM_info.script.version}`)).text()
-document.body.append(style)
+style.innerText = await (await fetch(`${HOST}/assets/style.css?v=${DEV_MODE ? Date.now() : GM_info.script.version}`)).text();
+document.body.append(style);
 
 PROMPT.onkeydown = (e) => {
   if (e.key === 'Enter') {

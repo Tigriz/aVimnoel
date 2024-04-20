@@ -54,9 +54,7 @@ kbd {
 }
 .vim-selection,
 .topic-message.vim-selection,
-tr.vim-selection {
-  background-color: #fff3 !important;
-}
+tr.vim-selection,
 tr.vim-selection.active {
-  background-color: #f003 !important;
+  background-color: #fff3 !important;
 }
