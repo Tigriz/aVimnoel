@@ -33,15 +33,18 @@ function setCursor(entries, index = 0, scrollTo = false) {
 const actions = {
   send: {
     description: 'Send message',
+    bypass: true,
     default: () => $(".form-group:has(input[name='_token']) button[type='submit']").click(),
   },
   return: {
     description: 'Return to relative menu',
+    bypass: true,
     topic: () => navigation.navigate('/forum'),
     mp: () => navigation.navigate('/messagerie'),
   },
   sendAndReturn: {
     description: 'Send message and return to relative menu',
+    bypass: true,
     topic: () => {
       $(".form-group:has(input[name='_token']) button[type='submit']").click();
       navigation.navigate('/forum');
@@ -53,6 +56,7 @@ const actions = {
   },
   help: {
     description: 'Show help',
+    bypass: true,
     default: () => ($('#vim-help').style.display = $('#vim-help').style.display === 'block' ? 'none' : 'block'),
   },
   autoEnd: {
@@ -185,6 +189,7 @@ const actions = {
   },
   escape: {
     description: 'Exit all modes',
+    bypass: true,
     default: () => {
       document.activeElement.blur();
       PROMPT.value = '';
@@ -193,7 +198,7 @@ const actions = {
 };
 
 function exec(action, parameters) {
-  if (INSERT_NODES.includes(document.activeElement.nodeName) && action !== 'escape') return;
+  if (INSERT_NODES.includes(document.activeElement.nodeName) && actions[action].bypass) return;
   if (typeof actions[action][PATH] !== 'undefined') actions[action][PATH](parameters);
   actions[action].default?.(parameters);
 }
