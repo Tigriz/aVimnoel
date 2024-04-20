@@ -187,7 +187,7 @@ const actions = {
     description: 'Refresh page',
     forum: () => navigation.reload(),
     topic: () => {
-      location.href += '#form';
+      location.hash = '#form';
       location.reload();
     },
   },
