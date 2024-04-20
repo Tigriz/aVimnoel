@@ -65,7 +65,10 @@ const actions = {
   help: {
     description: 'Show help',
     bypass: true,
-    default: () => ($('#vim-help').style.display = $('#vim-help').style.display === 'block' ? 'none' : 'block'),
+    default: () => {
+      $('#vim-help').style.display = $('#vim-help').style.display === 'block' ? 'none' : 'block';
+      $('#vim-help').focus();
+    },
   },
   autoEnd: {
     description: 'Set auto-end mode',
@@ -98,6 +101,7 @@ const actions = {
       $$('.topics-title a')[index].click();
     },
     topic: (index = cursor) => {
+      $('#vim-prompt').value = '-- VISUAL --';
       document.activeElement.blur();
       scroll($$('.topic-message')[index]);
     },
