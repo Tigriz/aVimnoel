@@ -47,14 +47,88 @@ export const keys = [
     action: 'prompt',
   },
   {
+    key: 'r',
+    on: 'keydown',
+    action: 'refresh',
+  },
+  {
+    key: 'Alt',
+    on: 'keydown',
+    action: 'showHints',
+  },
+  {
+    key: 'Alt',
+    on: 'keyup',
+    action: 'hideHints',
+  },
+  {
+    key: 'AltGraph',
+    on: 'keydown',
+    action: 'showHints',
+  },
+  {
+    key: 'AltGraph',
+    on: 'keyup',
+    action: 'hideHints',
+  },
+  {
+    key: 'i',
+    on: 'keydown',
+    action: 'insert',
+  },
+  {
+    key: 'h',
+    on: 'keydown',
+    action: 'previousPage',
+  },
+  {
+    key: 'ArrowLeft',
+    on: 'keydown',
+    action: 'previousPage',
+  },
+  {
+    key: 'H',
+    on: 'keydown',
+    action: 'page',
+    parameter: Number.MIN_SAFE_INTEGER,
+  },
+  {
     key: 'j',
     on: 'keydown',
     action: 'previousHighlight',
   },
   {
+    key: 'J',
+    on: 'keydown',
+    action: 'highlight',
+    parameter: Number.MIN_SAFE_INTEGER,
+  },
+  {
     key: 'k',
     on: 'keydown',
     action: 'nextHighlight',
+  },
+  {
+    key: 'K',
+    on: 'keydown',
+    action: 'highlight',
+    parameter: Number.MAX_SAFE_INTEGER,
+  },
+  {
+    key: 'l',
+    on: 'keydown',
+    action: 'nextPage',
+  },
+  {
+    key: 'ArrowRight',
+    on: 'keydown',
+    action: 'nextPage',
+  },
+  {
+    key: 'L',
+    on: 'keydown',
+    action: 'page',
+    parameter: Number.MAX_SAFE_INTEGER,
   },
   {
     key: 'Enter',

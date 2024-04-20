@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         a𝑽𝒊𝒎noel dev
-// @version      0.4.3
+// @name         a𝑽𝒊𝒎noel
+// @version      1.0.0
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -18,23 +18,29 @@ const { keys } = await import(`${HOST}/js/config.keys.js?v=${DEV_MODE ? Date.now
 const { prompts } = await import(`${HOST}/js/config.prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 const { $, $$, h, scroll, actions, exec } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
+const KEYS = localStorage.vim_keys || keys;
+document.KEYS = KEYS;
+const PROMPTS = localStorage.vim_prompts || prompts;
+document.PROMPTS = PROMPTS;
+
 const INSERT_NODES = ['TEXTAREA', 'INPUT'];
 
 const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
 <datalist id="vim-hints">
-  ${Object.keys(prompts)
+  ${Object.keys(PROMPTS)
     .map((prompt) => `<option value="${prompt}"></option>`)
     .join('')}
 </datalist>
 <pre id="vim-help" style="display: none">
-${keys
-  .map(
-    (key) =>
-      `<i class="${key.on}">${key.altKey ? '<kbd>Alt</kbd> + ' : ''}${key.ctrlKey ? '<kbd>Ctrl</kbd> + ' : ''}${
-        key.metaKey ? '<kbd>Meta</kbd> + ' : ''
-      }${key.shiftKey ? '<kbd>Shift</kbd> + ' : ''}<kbd>${key.key}</kbd></i>: ${actions[key.action].description} ${key.parameter ?? ''}`
-  )
+${KEYS.map(
+  (key) =>
+    `<i class="${key.on}">${key.altKey ? '<kbd>Alt</kbd> + ' : ''}${key.ctrlKey ? '<kbd>Ctrl</kbd> + ' : ''}${
+      key.metaKey ? '<kbd>Meta</kbd> + ' : ''
+    }${key.shiftKey ? '<kbd>Shift</kbd> + ' : ''}<kbd>${key.key}</kbd></i>: ${actions[key.action].description} ${key.parameter ?? ''}`
+).join('\n')}
+${Object.keys(PROMPTS)
+  .map((prompt) => `<kbd>${prompt}</kbd></i>: ${actions[PROMPTS[prompt]].description}`)
   .join('\n')}
 </pre>
 `);
@@ -44,8 +50,8 @@ document.body.append(...UI);
 PROMPT.onkeydown = (e) => {
   if (e.key === 'Enter') {
     try {
-      const prompt = prompts[PROMPT.value];
-      exec(prompt.action, prompt.parameter);
+      const prompt = PROMPTS[PROMPT.value];
+      exec(prompt);
     } finally {
       PROMPT.value = '';
       PROMPT.disabled = true;
@@ -60,7 +66,7 @@ document
 
 document.onkeyup = (e) => {
   console.debug('🔶 a𝑽𝒊𝒎noel: keyup', e);
-  const match = keys.find((key) => key.key === e.key && key.on === 'keyup');
+  const match = KEYS.find((key) => key.key === e.key && key.on === 'keyup');
   if (match) exec(match.action, match.parameter);
 };
 
@@ -72,7 +78,7 @@ document.onkeydown = (e) => {
   }
   if (INSERT_NODES.includes(document.activeElement.nodeName)) return;
 
-  const match = keys.find((key) => key.key === e.key && key.on === 'keydown');
+  const match = KEYS.find((key) => key.key === e.key && key.on === 'keydown');
   if (match) exec(match.action, match.parameter);
 };
 

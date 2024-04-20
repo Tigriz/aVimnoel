@@ -15,6 +15,10 @@ function scroll(element) {
   window.scrollTo({ top: element.getBoundingClientRect().y - document.querySelector('.navbar').clientHeight + window.scrollY });
 }
 
+function clamp(value, min = 0, max = Number.MAX_SAFE_INTEGER) {
+  return Math.min(Math.max(value, min), max);
+}
+
 function setCursor(entries, index = 0, scrollTo = false) {
   if (index < 0) index = 0;
   $$('.vim-selection').forEach((el) => el.classList.remove('vim-selection'));
@@ -35,7 +39,7 @@ const actions = {
     topic: () => navigation.navigate('/forum'),
     mp: () => navigation.navigate('/messagerie'),
   },
-  returnAndSend: {
+  sendAndReturn: {
     description: 'Send message and return to relative menu',
     topic: () => {
       $(".form-group:has(input[name='_token']) button[type='submit']").click();
@@ -49,6 +53,9 @@ const actions = {
   help: {
     description: 'Show help',
     default: () => ($('#vim-help').style.display = $('#vim-help').style.display === 'block' ? 'none' : 'block'),
+  },
+  autoEnd: {
+    description: 'Set auto-end mode',
   },
   highlight: {
     description: 'Highlight entry',
@@ -93,6 +100,36 @@ const actions = {
       scroll($$('.topic-message')[cursor]);
     },
   },
+  page: {
+    description: 'Go to page',
+    forum: (page) => {
+      navigation.navigate(`/forum/${Math.max(1, page)}`);
+    },
+    topic: (page) => {
+      navigation.navigate(
+        location.pathname.replace(
+          /\/(\d+)-(\d+)/g,
+          (_, topic) => `/${topic}-${clamp(page, 1, +$('.pagination-topic li:nth-last-child(2) a').innerText)}`
+        )
+      );
+    },
+  },
+  previousPage: {
+    description: 'Go to previous page',
+    forum: () => navigation.navigate(location.pathname.replace(/(\d+)/g, (_, page) => `${Math.max(1, +page - 1)}`)),
+    topic: () => navigation.navigate(location.pathname.replace(/\/(\d+)-(\d+)/g, (_, topic, page) => `/${topic}-${Math.max(1, +page - 1)}`)),
+  },
+  nextPage: {
+    description: 'Go to next page',
+    forum: () => navigation.navigate(`/forum/${/\d+/g.exec(location.pathname)?.[0] ? +/\d+/g.exec(location.pathname)?.[0] + 1 : 2}`),
+    topic: () =>
+      navigation.navigate(
+        location.pathname.replace(
+          /\/(\d+)-(\d+)/g,
+          (_, topic, page) => `/${topic}-${Math.min(+page + 1, +$('.pagination-topic li:nth-last-child(2) a').innerText)}`
+        )
+      ),
+  },
   back: {
     description: 'Go back',
     default: () => history.back(),
@@ -109,15 +146,21 @@ const actions = {
     description: 'Show hints',
     default: () =>
       $$('tbody tr .topic-icon').forEach((el, index) => {
-        el.append(...h(`<div class="vim-hint">${index > 12 ? '<kbd>Shift</kbd> + ' : ''}<kbd>${TOP_ROW[index % 13]}</kbd></div>`));
+        el.append(
+          ...h(
+            `<div class="vim-hint"><kbd>${
+              document.KEYS.find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
+            }</kbd></div>`
+          )
+        );
       }),
   },
   hideHints: {
     description: 'Hide hints',
     default: () => $$('.vim-hint').forEach((el) => el.remove()),
   },
-  reload: {
-    description: 'Reload page',
+  refresh: {
+    description: 'Refresh page',
     forum: () => navigation.reload(),
     topic: () => {
       location.href += '#form';
