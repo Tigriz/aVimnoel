@@ -13,34 +13,6 @@ export const keys = [
     parameter: 1,
   },
   */
-  ...`²&é"'(-è_çà)=`.split('').flatMap((key, index) => [
-    {
-      key,
-      on: 'keydown',
-      action: 'highlight',
-      parameter: index,
-    },
-    {
-      key,
-      on: 'keyup',
-      action: 'select',
-      parameter: index,
-    },
-  ]),
-  ...`~1234567890°+`.split('').flatMap((key, index) => [
-    {
-      key,
-      on: 'keydown',
-      action: 'highlight',
-      parameter: index + 13,
-    },
-    {
-      key,
-      on: 'keyup',
-      action: 'select',
-      parameter: index + 13,
-    },
-  ]),
   {
     key: ':',
     on: 'keydown',
@@ -160,4 +132,32 @@ export const keys = [
     on: 'keydown',
     action: 'delete',
   },
+  ...`²&é"'(-è_çà)=`.split('').flatMap((key, index) => [
+    {
+      key,
+      on: 'keydown',
+      action: 'highlight',
+      parameter: index,
+    },
+    {
+      key,
+      on: 'keyup',
+      action: 'select',
+      parameter: index,
+    },
+  ]),
+  ...`~1234567890°+`.split('').flatMap((key, index) => [
+    {
+      key,
+      on: 'keydown',
+      action: 'highlight',
+      parameter: index + 13,
+    },
+    {
+      key,
+      on: 'keyup',
+      action: 'select',
+      parameter: index + 13,
+    },
+  ]),
 ];
