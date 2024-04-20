@@ -108,11 +108,11 @@ const actions = {
   },
   edit: {
     description: 'Edit entry',
-    topic: (index = cursor) => $$('.topic-message .message-edit')[index].click(),
+    topic: (index = cursor) => $(`.topic-message:nth-child(${index + 1}) .message-edit`).click(),
   },
   delete: {
     description: 'Delete entry',
-    topic: (index = cursor) => $$('.topic-message .message-delete')[index].click(),
+    topic: (index = cursor) => $(`.topic-message:nth-child(${index + 1}) .message-delete`).click(),
   },
   page: {
     description: 'Go to page',
