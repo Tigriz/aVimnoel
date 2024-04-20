@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      1.0.7
+// @version      1.0.8
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -8,20 +8,20 @@
 // @match        https://avenoel.org/*
 // @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/assets/avimnoel.png
 // @run-at       document-start
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.keys.js?v=1.0.7
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.prompts.js?v=1.0.7
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/utils.js?v=1.0.7
-// @resource     IMPORTED_CSS https://raw.githubusercontent.com/Tigriz/aVimnoel/main/assets/style.css?v=1.0.7
-// @grant        GM_getResourceText
-// @grant        GM_addStyle
+// @grant        GM_info
 // ==/UserScript==
 
-GM_addStyle(GM_getResourceText('IMPORTED_CSS'));
+const DEV_MODE = GM_info.script.name.includes('dev');
+const HOST = DEV_MODE ? 'http://127.0.0.1:8080' : 'https://Tigriz.github.io/aVimnoel';
+
+const { keys } = await import(`${HOST}/js/config.keys.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { prompts } = await import(`${HOST}/js/config.prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { $, $$, h, scroll, actions, exec } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
 const KEYS = localStorage.vim_keys || keys;
-document.KEYS = KEYS;
+localStorage.vim_keys = JSON.stringify(KEYS)
 const PROMPTS = localStorage.vim_prompts || prompts;
-document.PROMPTS = PROMPTS;
+localStorage.vim_prompts = JSON.stringify(PROMPTS)
 
 const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
@@ -44,6 +44,10 @@ ${Object.keys(PROMPTS)
 `);
 const PROMPT = UI[0];
 document.body.append(...UI);
+
+const style = document.createElement('style');
+style.innerText = await (await fetch(`${HOST}/assets/style.css?v=${DEV_MODE ? Date.now() : GM_info.script.version}`)).text()
+document.body.append(style)
 
 PROMPT.onkeydown = (e) => {
   if (e.key === 'Enter') {

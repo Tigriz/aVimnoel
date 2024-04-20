@@ -154,7 +154,7 @@ const actions = {
         el.append(
           ...h(
             `<div class="vim-hint"><kbd>${
-              document.KEYS.find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
+              localStorage.vim_keys.find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
             }</kbd></div>`
           )
         );
@@ -202,3 +202,5 @@ function exec(action, parameters) {
   if (typeof actions[action][PATH] !== 'undefined') actions[action][PATH](parameters);
   actions[action].default?.(parameters);
 }
+
+export { $, $$, h, scroll, actions, exec };
