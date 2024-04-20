@@ -4,7 +4,7 @@
   width: 100vw;
   background: #0004;
   color: #fff;
-  z-index: 1000;
+  z-index: 999;
   font-family: monospace;
   padding: 4px;
   border: none;
@@ -22,10 +22,11 @@
   max-width: 400px;
   background: #000b;
   color: #fff;
-  z-index: 1000;
+  z-index: 1001;
   white-space: break-spaces;
   overflow: auto;
   max-height: 100vh;
+  padding: 8px;
   i {
     font-style: normal;
   }
