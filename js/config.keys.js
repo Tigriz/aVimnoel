@@ -1,4 +1,4 @@
-export const keys = [
+const keys = [
   /*
   {
     key: 'Key',

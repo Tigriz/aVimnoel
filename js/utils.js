@@ -188,5 +188,3 @@ function exec(action, parameters) {
   if (typeof actions[action][PATH] !== 'undefined') actions[action][PATH](parameters);
   actions[action].default?.(parameters);
 }
-
-export { $, $$, h, scroll, actions, exec };

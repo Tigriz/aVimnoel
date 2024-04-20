@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      1.0.0
+// @version      1.0.1
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -8,15 +8,14 @@
 // @match        https://avenoel.org/*
 // @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/img/avimnoel.png
 // @run-at       document-body
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.keys.js
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.prompts.js
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/utils.js
 // @grant        GM_info
 // ==/UserScript==
 
 const DEV_MODE = GM_info.script.name.includes('dev');
 const HOST = DEV_MODE ? 'http://127.0.0.1:8080' : 'https://raw.githubusercontent.com/Tigriz/aVimnoel/main';
-
-const { keys } = await import(`${HOST}/js/config.keys.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
-const { prompts } = await import(`${HOST}/js/config.prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
-const { $, $$, h, scroll, actions, exec } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
 const KEYS = localStorage.vim_keys || keys;
 document.KEYS = KEYS;
