@@ -1,5 +1,5 @@
 const PATH = location.pathname.split('/')[1];
-const INSERT_NODES = ['TEXTAREA', 'INPUT'];
+const INSERT_NODES = ['TEXTAREA', 'INPUT', 'BUTTON'];
 
 let cursor = 0;
 
@@ -197,13 +197,13 @@ const actions = {
       const target = $('input[name="title"]');
       scroll(target);
       target.focus();
-      PROMPT.value = '-- INSERT --';
+      $('#vim-prompt').value = '-- INSERT --';
     },
     topic: () => {
       const target = $('#form textarea');
       scroll(target);
       target.focus();
-      PROMPT.value = '-- INSERT --';
+      $('#vim-prompt').value = '-- INSERT --';
     },
   },
   escape: {
@@ -211,7 +211,7 @@ const actions = {
     bypass: true,
     default: () => {
       document.activeElement.blur();
-      PROMPT.value = '';
+      $('#vim-prompt').value = '';
     },
   },
 };
