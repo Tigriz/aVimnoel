@@ -1,0 +1,61 @@
+#vim-prompt {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  background: #0004;
+  color: #fff;
+  z-index: 1000;
+  font-family: monospace;
+  padding: 4px;
+  border: none;
+  outline: none;
+  pointer-events: none;
+}
+#vim-prompt:focus {
+  background: #0008;
+}
+#vim-help {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  max-width: 400px;
+  background: #000b;
+  color: #fff;
+  z-index: 1000;
+  white-space: break-spaces;
+  overflow: auto;
+  max-height: 100vh;
+  i {
+    font-style: normal;
+  }
+  .keydown kbd {
+    background: green;
+  }
+  .keyup kbd {
+    background: red;
+  }
+}
+kbd {
+  background-color: var(--popup-background);
+  border-radius: 3px;
+  color: var(--popup-color);
+  display: inline-block;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+.vim-hint {
+  position: absolute;
+  opacity: 0.9;
+  transform: translate(-100%, -100%);
+}
+.vim-selection,
+.topic-message.vim-selection,
+tr.vim-selection {
+  background-color: #fff3 !important;
+}
+tr.vim-selection.active {
+  background-color: #f003 !important;
+}
