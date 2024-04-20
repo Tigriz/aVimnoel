@@ -72,6 +72,11 @@ const keys = [
     action: 'hideHints',
   },
   {
+    key: 'Escape',
+    on: 'keydown',
+    action: 'escape',
+  },
+  {
     key: 'i',
     on: 'keydown',
     action: 'insert',

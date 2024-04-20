@@ -1,4 +1,5 @@
 const PATH = location.pathname.split('/')[1];
+const INSERT_NODES = ['TEXTAREA', 'INPUT'];
 
 let cursor = 0;
 
@@ -182,10 +183,17 @@ const actions = {
       PROMPT.value = '-- INSERT --';
     },
   },
+  escape: {
+    description: 'Exit all modes',
+    default: () => {
+      document.activeElement.blur();
+      PROMPT.value = '';
+    },
+  },
 };
 
 function exec(action, parameters) {
-  if(PROMPT.value === '-- INSERT --') return
+  if (INSERT_NODES.includes(document.activeElement.nodeName) && action !== 'escape') return;
   if (typeof actions[action][PATH] !== 'undefined') actions[action][PATH](parameters);
   actions[action].default?.(parameters);
 }
