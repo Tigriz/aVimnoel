@@ -15,9 +15,8 @@ const DEV_MODE = GM_info.script.name.includes('dev');
 const HOST = DEV_MODE ? 'http://127.0.0.1:8080' : 'https://raw.githubusercontent.com/Tigriz/aVimnoel/main';
 
 const { config } = await import(`${HOST}/js/config.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
-const { $, $$, h, scroll } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 const { prompts } = await import(`${HOST}/js/prompts.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
-const { actions } = await import(`${HOST}/js/actions.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
+const { actions, $, $$, h, scroll } = await import(`${HOST}/js/utils.js?v=${DEV_MODE ? Date.now() : GM_info.script.version}`);
 
 const PATH = location.pathname || window.location.pathname;
 const INSERT_NODES = ['TEXTAREA', 'INPUT'];
@@ -90,57 +89,9 @@ function ui() {
 }
 
 function css() {
-  const style = document.createElement('style');
-  style.innerText = `
-  #vim-prompt {
-    position: fixed;
-    bottom: 0;
-    width: 100vw;
-    background: #0004;
-    color: #fff;
-    z-index: 1000;
-    font-family: monospace;
-    padding: 4px;
-    border: none;
-    outline: none;
-    pointer-events: none;
-  }
-  #vim-prompt:focus {
-    background: #0008;
-  }
-  #vim-help{
-    position: fixed;
-    bottom: 0;
-    right:0;
-    margin: 0;
-    max-width: 400px;
-    background: #000b;
-    color: #fff;
-    z-index: 1000;
-    white-space: break-spaces;
-  }
-  kbd {
-    background-color: var(--popup-background);
-    border-radius: 3px;
-    color: var(--popup-color);
-    display: inline-block;
-    font-weight: 700;
-    line-height: 1;
-    padding: 2px 4px;
-    white-space: nowrap;
-  }
-  .vim-hint {
-    position: absolute;
-    opacity: 0.9;
-    transform: translate(-100%, -100%);
-  }
-  .vim-selection,
-  .topic-message.vim-selection,
-  tr.vim-selection {
-    background-color: #fff3 !important;
-  }
-  `;
-  document.body.append(style);
+  document
+    .querySelector('head')
+    .append(...h(`<link rel="stylesheet" type="text/css" href="${HOST}/assets/style.css?v=${DEV_MODE ? Date.now() : GM_info.script.version}">`));
 }
 
 function setCursor(index) {
