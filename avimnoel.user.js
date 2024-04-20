@@ -1,21 +1,22 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      1.0.1
+// @version      1.0.2
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
 // @license      CECILL-2.1; http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
 // @match        https://avenoel.org/*
-// @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/img/avimnoel.png
+// @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/assets/avimnoel.png
 // @run-at       document-body
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.keys.js
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.prompts.js
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/utils.js
-// @grant        GM_info
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.keys.js?v=1.0.2
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.prompts.js?v=1.0.2
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/utils.js?v=1.0.2
+// @resource     IMPORTED_CSS https://raw.githubusercontent.com/Tigriz/aVimnoel/main/assets/style.css
+// @grant        GM_getResourceText
+// @grant        GM_addStyle
 // ==/UserScript==
 
-const DEV_MODE = GM_info.script.name.includes('dev');
-const HOST = DEV_MODE ? 'http://127.0.0.1:8080' : 'https://raw.githubusercontent.com/Tigriz/aVimnoel/main';
+GM_addStyle(GM_getResourceText('IMPORTED_CSS'));
 
 const KEYS = localStorage.vim_keys || keys;
 document.KEYS = KEYS;
