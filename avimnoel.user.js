@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      1.0.20
+// @version      1.0.21
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -31,15 +31,15 @@ const UI = h(`
     .join('')}
 </datalist>
 <pre id="vim-help" style="display: none">
+${Object.keys(PROMPTS)
+  .map((prompt) => `<kbd>${prompt}</kbd></i>: ${actions[PROMPTS[prompt]]?.description}`)
+  .join('\n')}
 ${KEYS.map(
   (key) =>
     `<i class="${key.on}">${key.altKey ? '<kbd>Alt</kbd> + ' : ''}${key.ctrlKey ? '<kbd>Ctrl</kbd> + ' : ''}${
       key.metaKey ? '<kbd>Meta</kbd> + ' : ''
     }${key.shiftKey ? '<kbd>Shift</kbd> + ' : ''}<kbd>${key.key}</kbd></i>: ${actions[key.action]?.description} ${key.parameter ?? ''}`
 ).join('\n')}
-${Object.keys(PROMPTS)
-  .map((prompt) => `<kbd>${prompt}</kbd></i>: ${actions[PROMPTS[prompt]]?.description}`)
-  .join('\n')}
 </pre>
 `);
 const PROMPT = UI[0];
