@@ -154,7 +154,7 @@ const actions = {
         el.append(
           ...h(
             `<div class="vim-hint"><kbd>${
-              localStorage.vim_keys.find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
+              JSON.parse(localStorage.vim_keys).find((keybind) => keybind.action === 'highlight' && keybind.parameter === index).key
             }</kbd></div>`
           )
         );
