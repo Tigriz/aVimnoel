@@ -12,7 +12,7 @@ function h(string) {
 }
 
 function scroll(element) {
-  window.scrollTo({ top: element.getBoundingClientRect().y - document.querySelector('.navbar').clientHeight + window.scrollY });
+  window.scrollTo({ top: element?.getBoundingClientRect().y - document.querySelector('.navbar').clientHeight + window.scrollY });
 }
 
 function clamp(value, min = 0, max = Number.MAX_SAFE_INTEGER) {
@@ -185,6 +185,7 @@ const actions = {
 };
 
 function exec(action, parameters) {
+  if(PROMPT.value === '-- INSERT --') return
   if (typeof actions[action][PATH] !== 'undefined') actions[action][PATH](parameters);
   actions[action].default?.(parameters);
 }

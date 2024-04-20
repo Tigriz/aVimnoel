@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         a𝑽𝒊𝒎noel
-// @version      1.0.3
+// @version      1.0.4
 // @description  Add vim shortcuts to avenoel
 // @author       Tigriz
 // @source       https://github.com/Tigriz
@@ -8,9 +8,9 @@
 // @match        https://avenoel.org/*
 // @icon         https://raw.githubusercontent.com/Tigriz/aVimnoel/main/assets/avimnoel.png
 // @run-at       document-body
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.keys.js?v=1.0.3
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.prompts.js?v=1.0.3
-// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/utils.js?v=1.0.3
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.keys.js?v=1.0.4
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/config.prompts.js?v=1.0.4
+// @require      https://raw.githubusercontent.com/Tigriz/aVimnoel/main/js/utils.js?v=1.0.4
 // @resource     IMPORTED_CSS https://raw.githubusercontent.com/Tigriz/aVimnoel/main/assets/style.css
 // @grant        GM_getResourceText
 // @grant        GM_addStyle
