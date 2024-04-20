@@ -11,19 +11,22 @@
 // @grant        none
 // ==/UserScript==
 
+const VERSION = '0.4.3';
+
+const HOST = 'http://127.0.0.1:8080'
+
+const { config } = await import(`${HOST}/js/config.js?v=${VERSION}`);
+const { $, $$, h, scroll } = await import(`${HOST}/js/utils.js?v=${VERSION}`);
+const { prompts } = await import(`${HOST}/js/prompts.js?v=${VERSION}`);
+const { actions } = await import(`${HOST}/js/actions.js?v=${VERSION}`);
+
 const PATH = location.pathname || window.location.pathname;
 const INSERT_NODES = ['TEXTAREA', 'INPUT'];
 const TOP_ROW = ['Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal'];
-const PROMPT_HINTS = [
-  { code: ':h', description: 'Help' },
-  { code: ':q', description: 'Quit' },
-  { code: ':w', description: 'Save' },
-  { code: ':wq', description: 'Save and quit' },
-];
 const UI = h(`
 <input id="vim-prompt" list="vim-hints" name="vim-prompt" type="text" placeholder=":h" disabled>
 <datalist id="vim-hints">
-  ${PROMPT_HINTS.map((hint) => `<option value="${hint.code}"></option>`).join('')}
+  ${Object.keys(prompts).map((prompt) => `<option value="${prompt}"></option>`).join('')}
 </datalist>
 <pre id="vim-help" style="display: none">
 - <b>r</b> or <b>F5</b> refreshes
@@ -41,7 +44,7 @@ const UI = h(`
   - <b>Ctrl</b> goes to the bottom of the last page of a topic
 - <b>Alt</b> shows hints
 - <b>:</b> opens vim prompt; can be exited using <b>Escape</b>
-${PROMPT_HINTS.map((hint) => `  - <b>${hint.code}</b> ${hint.description}`).join('\n')}
+${Object.keys(prompts).map((prompt) => `  - <b>${prompt}</b> ${prompts[prompt].description}`).join('\n')}
 - <b>Backspace</b> navigates to previous page
 </pre>
 `);
@@ -49,19 +52,6 @@ const PROMPT = UI[0];
 
 const path = (section) => PATH.startsWith('/' + section);
 let cursor = 0;
-
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => document.querySelectorAll(selector);
-
-function h(string) {
-  const template = document.createElement('template');
-  template.innerHTML = string;
-  return template.content.children;
-}
-
-function scroll(element) {
-  window.scrollTo({ top: element.getBoundingClientRect().y - document.querySelector('.navbar').clientHeight + window.scrollY });
-}
 
 function ui() {
   PROMPT.onkeydown = (e) => {
@@ -89,7 +79,7 @@ function ui() {
       } finally {
         PROMPT.value = '';
         PROMPT.disabled = true;
-        e.stopPropagation()
+        e.stopPropagation();
       }
     }
   };
