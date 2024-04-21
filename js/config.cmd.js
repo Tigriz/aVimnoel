@@ -1,4 +1,4 @@
-export const prompts = {
+export const cmd = {
   ':h': 'help',
   ':q': 'return',
   ':w': 'send',
